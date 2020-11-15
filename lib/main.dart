@@ -16,7 +16,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Flutter Demo',https://gist.github.com/9134ae1fb22db998bfb16347e5d2fd3b
       theme: ThemeData(fontFamily: 'OpenSans'),
       initialRoute: WelcomeScreen.id,
       routes: <String, WidgetBuilder>{
