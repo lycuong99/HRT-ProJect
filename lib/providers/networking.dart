@@ -14,4 +14,14 @@ class NetWorkHelper {
       print(response.statusCode);
     }
   }
+
+  Future postData(dynamic body) async {
+    http.Response response = await http.post(url, body: body);
+
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body);
+    } else {
+      print(response.statusCode);
+    }
+  }
 }

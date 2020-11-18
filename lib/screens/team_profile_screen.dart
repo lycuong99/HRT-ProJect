@@ -7,11 +7,14 @@ import 'package:hire_remote_team/components/review.dart';
 import 'package:hire_remote_team/components/review_card.dart';
 import 'package:hire_remote_team/components/section_custom.dart';
 import 'package:hire_remote_team/components/skill_tag.dart';
+import 'package:hire_remote_team/components/team_member_card.dart';
+import 'package:hire_remote_team/models/feedback.dart';
+import 'package:hire_remote_team/models/member.dart';
 import 'package:hire_remote_team/models/skill.dart';
 
 import 'package:hire_remote_team/models/team.dart';
+import 'package:hire_remote_team/screens/create_contract_screen_body.dart';
 import 'package:hire_remote_team/screens/home_screen.dart';
-
 import 'package:hire_remote_team/ultilites/constants.dart';
 
 List<Container> _buildGridAlbumList(int count) {
@@ -84,7 +87,10 @@ class _TeamProfileScreenState extends State<TeamProfileScreen> {
         backgroundColor: Colors.white,
         bottomNavigationBar: BottomBarButton(
           right: 'HIRE',
-          rightOnPressed: () {},
+          rightOnPressed: () {
+            Navigator.pushNamed(context, CreateContractScreen.id,
+                arguments: ['']);
+          },
           left: Icon(
             Icons.message,
             size: 30,
@@ -100,9 +106,9 @@ class _TeamProfileScreenState extends State<TeamProfileScreen> {
               return buildScreen(snapshot);
             } else {
               return Center(
-                child: SpinKitDoubleBounce(
+                child: SpinKitCircle(
                   size: 100.0,
-                  color: Colors.black12,
+                  color: Colors.blue,
                 ),
               );
             }
@@ -163,7 +169,7 @@ class _TeamProfileScreenState extends State<TeamProfileScreen> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(team.name,
+                    Text(team.name ?? 'No data',
                         style: TextStyle(
                           color: Colors.black,
                           fontSize: 20.0,
@@ -171,7 +177,7 @@ class _TeamProfileScreenState extends State<TeamProfileScreen> {
                     RatingBar.builder(
                         itemCount: 5,
                         minRating: 1,
-                        initialRating: 4,
+                        initialRating: team.averageRating,
                         itemSize: 25,
                         itemPadding: EdgeInsets.symmetric(horizontal: 1.0),
                         itemBuilder: (context, _) {
@@ -237,7 +243,7 @@ class _TeamProfileScreenState extends State<TeamProfileScreen> {
                     ListTile(
                       title: Align(
                         child: Text(
-                          "1000/1h",
+                          '${team.salarySuggest}/month',
                           style: kContentCard,
                         ),
                         alignment: Alignment(-1.1, 0),
@@ -254,64 +260,93 @@ class _TeamProfileScreenState extends State<TeamProfileScreen> {
               Padding(
                 padding: EdgeInsets.only(left: kPaddingHorizonApp),
                 child: Text(
-                  'I love the people I photograph. I mean, they’re my friends. I’ve never met most of them or I don’t know them at all, yet through my images I live with them.',
+                  team.description ?? 'No data',
                   style: kContentCard,
                 ),
               ),
               SizedBox(
                 height: 10,
               ),
+              // SectionCustom(
+              //   title: 'Skills',
+              //   child: Padding(
+              //     padding: EdgeInsets.only(
+              //         left: kPaddingHorizonApp, right: kPaddingHorizonApp),
+              //     child: GroupSkillTag(
+              //       tags: team.skills,
+              //       backgroundColor: kAppDefaultColor.withAlpha(210),
+              //       onTap: (i) {},
+              //     ),
+              //   ),
+              // ),
+              SizedBox(
+                height: 10,
+              ),
               SectionCustom(
-                title: 'Skills',
-                child: Padding(
-                  padding: EdgeInsets.only(
-                      left: kPaddingHorizonApp, right: kPaddingHorizonApp),
-                  child: GroupSkillTag(
-                    tags: team.skills,
-                    backgroundColor: kAppDefaultColor.withAlpha(210),
-                    onTap: (i) {},
-                  ),
+                title: 'Leader',
+                child: MemberCard(
+                  memberId: team.leaderId ?? 'unknown',
+                  name: team.leaderId ?? 'unknown',
+                  role: 'Leader',
                 ),
+              ),
+              SectionCustom(
+                title: 'Member',
+                child: buildMember(team.members),
               ),
               SizedBox(
                 height: 10,
               ),
               SectionCustom(
-                title: 'Reviews',
-                paddingTitle: EdgeInsets.only(left: kPaddingHorizonApp),
-                child: ListView(
-                  padding: EdgeInsets.only(top: 0),
-                  shrinkWrap: true,
-                  primary: false,
-                  children: [
-                    ReviewCard(
-                      rating: 4,
-                      comment: 'Thanks for bring for me a beautiful albums',
-                      date: '20/01/2020',
-                      imgProfileURL: 'images/avatar_2.jpg',
-                      rator: 'Huyen My',
-                    ),
-                    ReviewCard(
-                      rating: 5,
-                      comment: 'Thanks for bring for me a beautiful albums',
-                      date: '21/04/2020',
-                      imgProfileURL: 'images/p2.jpg',
-                      rator: 'Tri Nguyen',
-                    ),
-                    ReviewCard(
-                      rating: 4,
-                      comment: 'He is so kind',
-                      date: '12/05/2020',
-                      imgProfileURL: 'images/avatar_3.jpg',
-                      rator: 'Nguyen Thi Quynh',
-                    ),
-                  ],
-                ),
-              )
+                  title: 'Reviews',
+                  paddingTitle: EdgeInsets.only(left: kPaddingHorizonApp),
+                  child: buildFeedbacks(team.feedbacks))
             ],
           ),
         ),
       ),
+    );
+  }
+
+  Widget buildFeedbacks(List<FeedBack> feedBacks) {
+    if (feedBacks == null || feedBacks.isEmpty) {
+      return Text('No Feedback');
+    }
+
+    return ListView.builder(
+      padding: EdgeInsets.only(top: 0),
+      shrinkWrap: true,
+      itemCount: feedBacks.length,
+      primary: false,
+      itemBuilder: (context, index) {
+        return ReviewCard(
+          rating: 4,
+          comment: feedBacks[index].content,
+          date: feedBacks[index].dateCreate,
+          imgProfileURL: 'images/avatar_2.jpg',
+          rator: feedBacks[index].customerName,
+        );
+      },
+    );
+  }
+
+  Widget buildMember(List<Member> members) {
+    if (members == null || members.isEmpty) {
+      return Text('No Member');
+    }
+
+    return ListView.builder(
+      padding: EdgeInsets.only(top: 0),
+      shrinkWrap: true,
+      itemCount: members.length,
+      primary: false,
+      itemBuilder: (context, index) {
+        return MemberCard(
+          name: members[index].name,
+          memberId: members[index].id,
+          role: members[index].role ?? "unknown",
+        );
+      },
     );
   }
 }

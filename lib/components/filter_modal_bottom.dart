@@ -78,8 +78,6 @@ class _FilterModalBottomState extends State<FilterModalBottom> {
   double rating = 4;
   List<bool> isToggleSelected = [false, false, false];
   double distance = 50;
-  double _lowerValue = 0;
-  double _upperValue = 0;
   RangeValues _values = RangeValues(100, 400);
   RangeLabels labels = RangeLabels('1', "100");
   double minPrice;

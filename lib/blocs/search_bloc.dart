@@ -7,6 +7,7 @@ class SearchTeamsBloc {
   FilterObj filterObj;
   Sort sortBy;
   final _repository = TeamRepo();
+  // ignore: close_sinks
   final _teamFetcher = PublishSubject<TeamListModel>();
 
   Stream<TeamListModel> get stream => _teamFetcher.stream;

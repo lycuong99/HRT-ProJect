@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hire_remote_team/ultilites/constants.dart';
 
+// ignore: must_be_immutable
 class BottomBarButton extends StatelessWidget {
   String right;
   Function rightOnPressed;

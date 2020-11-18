@@ -31,98 +31,93 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     // final List<int> numbers = [1, 2, 3, 5, 8, 13, 21, 34, 55];
     recommendTeamsBloc.fetchRecommendTeams();
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Home'),
-      ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-              height: 60,
-              margin: EdgeInsets.only(bottom: kDistanceComponentApp),
-              padding: EdgeInsets.symmetric(
-                  horizontal: kPaddingHorizonApp, vertical: 10),
-              child: SearchNavigator()),
-          SectionCustom(
-            title: 'What are you looking for?',
-            paddingTitle:
-                const EdgeInsets.symmetric(horizontal: kPaddingHorizonApp),
-            child: Container(
-              height: 100,
-              child: Material(
-                child: GridView.count(
-                  shrinkWrap: true,
-                  crossAxisCount: 4,
-                  padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-                  mainAxisSpacing: 30.0,
-                  crossAxisSpacing: 10.0,
-                  cacheExtent: 2,
-                  children: [
-                    CircleMenuItem(
-                        title: 'Web',
-                        img: AssetImage(
-                          'images/web_icon.png',
-                        )),
-                    CircleMenuItem(
-                        title: 'Web',
-                        img: AssetImage(
-                          'images/android_icon.png',
-                        )),
-                    CircleMenuItem(
-                        title: 'Web',
-                        img: AssetImage(
-                          'images/ios_icon.png',
-                        )),
-                    CircleMenuItem(
-                        title: 'Web',
-                        img: AssetImage(
-                          'images/ios_icon.png',
-                        )),
-                    CircleMenuItem(
-                        title: 'Web',
-                        img: AssetImage(
-                          'images/web_icon.png',
-                        )),
-                    CircleMenuItem(
-                        title: 'Web',
-                        img: AssetImage(
-                          'images/android_icon.png',
-                        )),
-                    CircleMenuItem(
-                        title: 'Web',
-                        img: AssetImage(
-                          'images/ios_icon.png',
-                        )),
-                    CircleMenuItem(
-                        title: 'Web',
-                        img: AssetImage(
-                          'images/ios_icon.png',
-                        )),
-                  ],
-                ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+            height: 60,
+            margin: EdgeInsets.only(bottom: kDistanceComponentApp),
+            padding: EdgeInsets.symmetric(
+                horizontal: kPaddingHorizonApp, vertical: 10),
+            child: SearchNavigator()),
+        SectionCustom(
+          title: 'What are you looking for?',
+          paddingTitle:
+              const EdgeInsets.symmetric(horizontal: kPaddingHorizonApp),
+          child: Container(
+            height: 100,
+            child: Material(
+              child: GridView.count(
+                shrinkWrap: true,
+                crossAxisCount: 4,
+                padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                mainAxisSpacing: 30.0,
+                crossAxisSpacing: 10.0,
+                cacheExtent: 2,
+                children: [
+                  CircleMenuItem(
+                      title: 'Web',
+                      img: AssetImage(
+                        'images/web_icon.png',
+                      )),
+                  CircleMenuItem(
+                      title: 'Web',
+                      img: AssetImage(
+                        'images/android_icon.png',
+                      )),
+                  CircleMenuItem(
+                      title: 'Web',
+                      img: AssetImage(
+                        'images/ios_icon.png',
+                      )),
+                  CircleMenuItem(
+                      title: 'Web',
+                      img: AssetImage(
+                        'images/ios_icon.png',
+                      )),
+                  CircleMenuItem(
+                      title: 'Web',
+                      img: AssetImage(
+                        'images/web_icon.png',
+                      )),
+                  CircleMenuItem(
+                      title: 'Web',
+                      img: AssetImage(
+                        'images/android_icon.png',
+                      )),
+                  CircleMenuItem(
+                      title: 'Web',
+                      img: AssetImage(
+                        'images/ios_icon.png',
+                      )),
+                  CircleMenuItem(
+                      title: 'Web',
+                      img: AssetImage(
+                        'images/ios_icon.png',
+                      )),
+                ],
               ),
             ),
           ),
-          SectionCustom(
-            title: "Team For you",
-            paddingTitle:
-                const EdgeInsets.symmetric(horizontal: kPaddingHorizonApp),
-            child: Container(
-              height: MediaQuery.of(context).size.height * 0.28,
-              child: StreamBuilder<TeamListModel>(
-                  stream: recommendTeamsBloc.stream,
-                  builder: (context, AsyncSnapshot<TeamListModel> snapshot) {
-                    if (snapshot.hasData) {
-                      return buildRecommendTeam(snapshot);
-                    } else {
-                      return Center(child: Text('No recode'));
-                    }
-                  }),
-            ),
-          )
-        ],
-      ),
+        ),
+        SectionCustom(
+          title: "Team For you",
+          paddingTitle:
+              const EdgeInsets.symmetric(horizontal: kPaddingHorizonApp),
+          child: Container(
+            height: MediaQuery.of(context).size.height * 0.28,
+            child: StreamBuilder<TeamListModel>(
+                stream: recommendTeamsBloc.stream,
+                builder: (context, AsyncSnapshot<TeamListModel> snapshot) {
+                  if (snapshot.hasData) {
+                    return buildRecommendTeam(snapshot);
+                  } else {
+                    return Center(child: Text('No recode'));
+                  }
+                }),
+          ),
+        )
+      ],
     );
   }
 

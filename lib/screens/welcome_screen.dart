@@ -19,7 +19,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
         body: Container(
       decoration: BoxDecoration(
           image: DecorationImage(
-        image: AssetImage("images/login_bgrd_2.jpg"),
+        image: AssetImage('images/welcomebg.jpg'),
         fit: BoxFit.cover,
         colorFilter:
             ColorFilter.mode(Colors.yellow.withOpacity(0.9), BlendMode.dstATop),

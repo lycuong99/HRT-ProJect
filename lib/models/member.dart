@@ -11,6 +11,20 @@ class Member {
     _name = parsedJson[MemberConst.NAME];
     _role = parsedJson[MemberConst.ROLE];
   }
+
+  String get role => _role;
+
+  String get teamId => _teamId;
+
+  String get description => _description;
+
+  double get experience => _experience;
+
+  String get avatar => _avatar;
+
+  String get name => _name;
+
+  String get id => _id;
 }
 
 class MemberConst {

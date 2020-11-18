@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "343158467473",
+    "firebase_url": "https://hireremoteteam.firebaseio.com",
+    "project_id": "hireremoteteam",
+    "storage_bucket": "hireremoteteam.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:343158467473:android:aea9af84f4b9a2decf0830",
+        "android_client_info": {
+          "package_name": "com.cuonglv.hire_remote_team"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "343158467473-ldi5k55n9g4jc5v242rgadl8n0itnr3s.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDfh5Vvlj4r3QHmei0nRGZ4kb7haF3puMs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "343158467473-ldi5k55n9g4jc5v242rgadl8n0itnr3s.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -31,3 +31,13 @@ const kProfileTitle = TextStyle(
   fontWeight: FontWeight.w900,
   fontSize: 18,
 );
+
+final kInputDecoration = InputDecoration(
+    contentPadding: const EdgeInsets.all(15.0),
+    focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(11),
+        borderSide: BorderSide(width: 2, color: kAppDefaultColor)),
+    fillColor: Color(0xffE8E4F4).withAlpha(100),
+    filled: true,
+    border: OutlineInputBorder(
+        borderSide: BorderSide.none, borderRadius: BorderRadius.circular(11)));
