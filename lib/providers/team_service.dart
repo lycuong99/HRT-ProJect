@@ -1,3 +1,7 @@
+import 'dart:convert';
+
+import 'package:hire_remote_team/models/filter.dart';
+import 'package:hire_remote_team/models/skill.dart';
 import 'package:hire_remote_team/models/team.dart';
 
 import 'package:hire_remote_team/providers/networking.dart';
@@ -11,6 +15,52 @@ class TeamService {
     var teams = await _netWorkHelper.getData();
     print(teams);
     TeamListModel teamList = TeamListModel.fromJson(teams);
+    return teamList;
+  }
+
+  String _getSortValue(Sort sort) {
+    if (sort == Sort.NONE) return null;
+    return sort.toString().replaceFirst('Sort.', '');
+  }
+
+  getListSkillId(List<Skill> skill) {
+    if (skill == null || skill.isEmpty) {
+      return null;
+    }
+    return skill.map((e) => e.id);
+  }
+
+  Future<TeamListModel> fetchSearchResult(
+      String key, FilterObj filterObj, Sort sortBy) async {
+    String url = TeamConst.URL_SEARCH_FILTER;
+    _netWorkHelper = NetWorkHelper(url: url);
+    // filterObj.skills.map((e) => e.id).toList();
+    // ${filterObj.skills?.map((e) => e.id).toList().toString()}
+
+    Map<String, dynamic> bodyCustom = {
+      "name": key,
+      "skillId": getListSkillId(filterObj.skills),
+      "minPrice": filterObj.minPrice,
+      "maxPrice": filterObj.maxPrice,
+      "minSizeTeam": filterObj.minSizeTeam,
+      "maxSizeTeam": filterObj.maxSizeTeam,
+      "rate": filterObj.minRating,
+      "pageNumber": 0,
+      "itemPerPage": 10000,
+      "sort": _getSortValue(sortBy)
+    };
+
+    Map<String, String> headers = {
+      "accept": "application/octet-stream",
+      "Content-Type": "application/json"
+    };
+    print(bodyCustom);
+
+    var teams = await _netWorkHelper.postData(jsonEncode(bodyCustom), headers);
+    print('team:$teams');
+    TeamListModel teamList = TeamListModel.fromJson(teams);
+    teamList.results
+        .removeWhere((element) => element.averageRating < filterObj.minRating);
     return teamList;
   }
 

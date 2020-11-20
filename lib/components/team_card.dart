@@ -84,19 +84,26 @@ class VerticalTeamCard extends StatelessWidget {
 class ResultTeamCard extends StatelessWidget {
   String imgUrl;
   String name;
-  String price;
+  double price;
   double rating;
   Function onTap;
-  ResultTeamCard({this.imgUrl, this.name, this.rating});
+  int totalMember;
+  ResultTeamCard(
+      {this.imgUrl,
+      this.name,
+      this.rating = 0,
+      this.price = 0,
+      this.totalMember = 0,
+      this.onTap});
 
   @override
   Widget build(BuildContext context) {
     return Container(
       height: 130,
-      margin: EdgeInsets.only(top: 14, right: 2, left: 2, bottom: 2),
-      padding: EdgeInsets.symmetric(vertical: 10),
+      margin: EdgeInsets.only(top: 10, right: 2, left: 2, bottom: 2),
+      padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
       decoration: BoxDecoration(
-          color: Color(0xfffafafa),
+          color: Colors.white,
           borderRadius: BorderRadius.circular(11.0),
           boxShadow: [
             BoxShadow(
@@ -107,24 +114,25 @@ class ResultTeamCard extends StatelessWidget {
         child: Row(
           children: [
             Container(
-              height: 86,
-              width: 86,
+              height: 110,
+              width: 100,
               // child: CircleAvatar(
               //   radius: 25.0,
               //   backgroundColor: Colors.white,
               //   backgroundImage: AssetImage(imgUrl),
               // ),
               decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(17),
-                  border: Border.all(width: 1.5, color: kGreyColor),
+                  borderRadius: BorderRadius.circular(11),
+                  // border: Border.all(width: 1.5, color: kGreyColor),
                   image: DecorationImage(
                     image: AssetImage(imgUrl),
                     fit: BoxFit.cover,
                   )),
-              margin: EdgeInsets.all(10),
+              margin: EdgeInsets.only(right: 10),
             ),
             Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -138,20 +146,6 @@ class ResultTeamCard extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [],
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Icon(
-                          Icons.location_on,
-                          size: 18,
-                          color: Colors.grey,
-                        ),
-                        Text(
-                          '',
-                          style: kContentCard,
-                        )
-                      ],
-                    )
                   ],
                 ),
                 RatingBar.builder(
@@ -167,13 +161,30 @@ class ResultTeamCard extends StatelessWidget {
                     );
                   },
                 ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Icon(
+                      Icons.group,
+                      size: 18,
+                      color: Colors.grey,
+                    ),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    Text(
+                      '$totalMember members',
+                      style: kContentCard,
+                    )
+                  ],
+                ),
                 SizedBox(
                   height: 10,
                 ),
                 Row(
                   children: [
                     Text(
-                      "\$1000/month",
+                      "\$$price/month",
                       textAlign: TextAlign.right,
                       style: TextStyle(
                           fontWeight: FontWeight.w500,

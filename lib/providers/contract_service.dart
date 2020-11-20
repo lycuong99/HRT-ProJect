@@ -7,7 +7,7 @@ class ContractService {
 
   void createContract(Contract contract) {
     NetWorkHelper netWorkHelper = NetWorkHelper(url: '');
-    var data = netWorkHelper.postData(contract);
+    var data = netWorkHelper.postData(contract, null);
   }
 
   Future<ContractListModel> getAllContract(customerId) async {
@@ -22,6 +22,8 @@ class ContractService {
   Future<ContractListModel> getExampleContract() async {
     final data = await LocalAssetsHelper.getDataFromAssets(
         'assets/contracts_example.json');
+    print('EXAMPLE - DATE:');
+    print(data);
     ContractListModel listModel = ContractListModel.fromJson(data);
     return listModel;
   }

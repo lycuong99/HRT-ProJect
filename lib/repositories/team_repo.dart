@@ -7,8 +7,8 @@ class TeamRepo {
   final TeamService service = TeamService();
   Future<Team> getTeam(teamId) => service.getTeam(teamId);
   Future<TeamListModel> getRecommendTeams() => service.getRecommendTeams();
-  Future<TeamListModel> search(String key, FilterObj filterObj) {
-    return service.getRecommendTeams();
+  Future<TeamListModel> search(String key, FilterObj filterObj, Sort sortBy) {
+    return service.fetchSearchResult(key, filterObj, sortBy);
   }
 
   //

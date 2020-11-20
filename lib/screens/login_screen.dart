@@ -5,6 +5,7 @@ import 'package:hire_remote_team/components/button.dart';
 import 'package:hire_remote_team/providers/firebase_auth.dart';
 import 'package:hire_remote_team/screens/home_screen.dart';
 import 'package:hire_remote_team/screens/main_screen.dart';
+import 'package:hire_remote_team/screens/welcome_screen.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -104,6 +105,9 @@ class _LoginScreenState extends State<LoginScreen> {
                             if (errorCode == 540662271) {
                               return 'The email address is badly formatted.';
                             }
+                            if (errorCode == 246276089) {
+                              return 'The email address is existed.';
+                            }
                             return null;
                           },
                           decoration: const InputDecoration(
@@ -129,6 +133,9 @@ class _LoginScreenState extends State<LoginScreen> {
                             if (errorCode == 328678433) {
                               return 'Password should be at least 6 characters';
                             }
+                            if (errorCode == 218430393) {
+                              return 'The password is invalid or the user does not have a password';
+                            }
                             return null;
                           },
                           decoration: InputDecoration(
@@ -152,7 +159,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         RoundButtonFullWidth(
                           color: Colors.black,
                           fontColor: Colors.white,
-                          text: 'Sign In',
+                          text: 'Log In',
                           onPressed: () async {
                             errorCode = 0;
 
@@ -167,14 +174,16 @@ class _LoginScreenState extends State<LoginScreen> {
                                 String email = _emailInputController.text;
                                 String password = _passwordInputController.text;
 
-                                final user = authProvider.signInWithEmail(
+                                final user = await authProvider.signInWithEmail(
                                     email, password);
-
+                                print('Come heareaeaeae');
+                                print(user);
                                 if (user != null) {
-                                  Navigator.pushNamed(context, MainScreen.id);
+                                  Navigator.pushReplacementNamed(
+                                      context, MainScreen.id);
                                 }
                               } catch (e) {
-                                print(e.hashCode);
+                                print('HashCode:' + e.hashCode.toString());
 
                                 errorCode = e.hashCode;
                                 _formKey.currentState.validate();
@@ -194,11 +203,17 @@ class _LoginScreenState extends State<LoginScreen> {
                           text: 'Log In with Google',
                           onPressed: () async {
                             final user = await authProvider.signInWithGoogle();
+                            String token = await user.user.getIdToken(true);
+                            print('UID TOKEN:' + token);
                             if (user != null) {
-                              // Navigator.pushReplacementNamed(
-                              //     context, MainScreen.id);
-                              Navigator.of(context).pushNamedAndRemoveUntil(
-                                  MainScreen.id, (route) => route.isFirst);
+                              Navigator.pushReplacementNamed(
+                                  context, MainScreen.id);
+                              // Navigator.of(context).popUntil((route) => false)
+                              // Navigator.of(context).pop();
+                              // Navigator.of(context).pop();
+                              // Navigator.of(context).pushNamed(MainScreen.id);
+
+                              // Navigator.of(context).p
                               // Navigator.of(context).removeRoute(context.)
                             }
                           },

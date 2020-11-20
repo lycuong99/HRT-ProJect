@@ -1,6 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:group_button/group_button.dart';
 import 'package:hire_remote_team/components/section_custom.dart';
 import 'package:hire_remote_team/models/filter.dart';
@@ -9,6 +12,26 @@ import 'package:hire_remote_team/providers/data_filter.dart';
 import 'package:hire_remote_team/ultilites/constants.dart';
 
 const kTitleFilterStyle = TextStyle(fontWeight: FontWeight.w600, fontSize: 16);
+typedef UpdateFilterCallBack = void Function(FilterObj);
+
+class SkillBloc {
+  final _skillFetcher = StreamController<SkillListModel>.broadcast();
+
+  Stream<SkillListModel> get stream => _skillFetcher.stream;
+
+  fetchSkills() async {
+    SkillListModel itemModel = SkillListModel();
+    itemModel.datas = await DataFilter().getSkills();
+    // print('IteamModel IN SEARCH:+${itemModel?.results?.length}');
+    _skillFetcher.sink.add(itemModel);
+  }
+}
+
+final skillBloc = SkillBloc();
+
+class SkillListModel {
+  List<Skill> datas;
+}
 
 class SkillFilter {
   List<Skill> _datas;
@@ -18,9 +41,9 @@ class SkillFilter {
 
   List<Skill> get datas => _datas;
 
-  getResources() async {
+  Future getResources(List<Skill> datas) {
     // _datas = await DataFilter().getSkills();
-    _datas = DataFilter().getExample();
+    _datas = datas;
     _values = _datas.map((e) => e.name).toList();
   }
 
@@ -52,7 +75,7 @@ class SizeTeamItem {
 }
 
 class FilterModalBottom extends StatefulWidget {
-  Function onPressed;
+  UpdateFilterCallBack onPressed;
   FilterObj filterObj;
   FilterModalBottom({this.onPressed, this.filterObj});
 
@@ -75,29 +98,34 @@ List<SizeTeamItem> sizeTeamItem = [
 ];
 
 class _FilterModalBottomState extends State<FilterModalBottom> {
-  double rating = 4;
   List<bool> isToggleSelected = [false, false, false];
   double distance = 50;
-  RangeValues _values = RangeValues(100, 400);
+  RangeValues _values;
   RangeLabels labels = RangeLabels('1', "100");
-  double minPrice;
-  double maxPrice;
-  SkillFilter _skillFilter;
 
+  SkillFilter _skillFilter = SkillFilter();
+  FilterObj filterObj;
   @override
   void initState() {
     // TODO: implement initState
+    // _skillFilter.getResources();
+    skillBloc.fetchSkills();
     super.initState();
-    _skillFilter = SkillFilter();
-    _skillFilter.getResources();
 
-    rating = widget.filterObj.minRating;
-    minPrice = widget.filterObj.minPrice;
-    maxPrice = widget.filterObj.maxPrice;
+    filterObj = widget.filterObj;
+    filterObj.minSizeTeam = sizeTeamItem[0].min;
+    filterObj.maxSizeTeam = sizeTeamItem[0].max;
+    _values = RangeValues(filterObj.minPrice, filterObj.maxPrice);
   }
+
+  // Widget buildSkill() async {
+  //   await _skillFilter.getResources();
+  // }
 
   @override
   Widget build(BuildContext context) {
+    var s = Duration(seconds: 4);
+
     return Container(
       height: MediaQuery.of(context).size.height * 0.75,
       padding: const EdgeInsets.only(left: 5, right: 10, top: 15),
@@ -143,16 +171,31 @@ class _FilterModalBottomState extends State<FilterModalBottom> {
                     child: Container(
                       padding: const EdgeInsets.symmetric(
                           horizontal: kPaddingHorizonApp),
-                      child: GroupButton(
-                        onSelected: (index, isSelected) {
-                          _skillFilter.changeSelectedSkill(index, isSelected);
+                      child: StreamBuilder<SkillListModel>(
+                        stream: skillBloc.stream,
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData) {
+                            _skillFilter.getResources(snapshot.data.datas);
+
+                            return GroupButton(
+                              onSelected: (index, isSelected) {
+                                _skillFilter.changeSelectedSkill(
+                                    index, isSelected);
+                              },
+                              isRadio: false,
+                              unselectedTextStyle:
+                                  TextStyle(color: kAppDefaultColor),
+                              spacing: 5,
+                              buttons: _skillFilter.values,
+                              selectedColor: kAppDefaultColor,
+                              unselectedBorderColor: kAppDefaultColor,
+                            );
+                          } else {
+                            return SpinKitCircle(
+                              color: kAppDefaultColor,
+                            );
+                          }
                         },
-                        isRadio: false,
-                        unselectedTextStyle: TextStyle(color: kAppDefaultColor),
-                        spacing: 5,
-                        buttons: _skillFilter.values,
-                        selectedColor: kAppDefaultColor,
-                        unselectedBorderColor: kAppDefaultColor,
                       ),
                     ),
                   ),
@@ -189,13 +232,15 @@ class _FilterModalBottomState extends State<FilterModalBottom> {
                         values: _values,
                         labels: labels,
                         onChanged: (rangeValue) {
+                          filterObj.minPrice = rangeValue.start;
+                          filterObj.maxPrice = rangeValue.end;
                           _values = rangeValue;
                           labels = RangeLabels("${_values.start.floor()}\$",
                               "${_values.end.floor()}\$");
                           setState(() {});
                         },
                         min: 0,
-                        max: 10000,
+                        max: 1000000000,
                       ),
                     ),
                   ),
@@ -213,7 +258,10 @@ class _FilterModalBottomState extends State<FilterModalBottom> {
                       padding: const EdgeInsets.symmetric(
                           horizontal: kPaddingHorizonApp),
                       child: GroupButton(
-                        onSelected: (index, isSelected) {},
+                        onSelected: (index, isSelected) {
+                          filterObj.minSizeTeam = sizeTeamItem[index].min;
+                          filterObj.maxSizeTeam = sizeTeamItem[index].max;
+                        },
                         isRadio: true,
                         unselectedTextStyle: TextStyle(color: kAppDefaultColor),
                         spacing: 5,
@@ -236,7 +284,7 @@ class _FilterModalBottomState extends State<FilterModalBottom> {
                       padding: const EdgeInsets.only(left: 8.0),
                       child: RatingBar.builder(
                         itemSize: 30,
-                        initialRating: rating,
+                        initialRating: filterObj.minRating,
                         minRating: 1,
                         allowHalfRating: true,
                         itemCount: 5,
@@ -247,7 +295,9 @@ class _FilterModalBottomState extends State<FilterModalBottom> {
                             color: Colors.amber,
                           );
                         },
-                        onRatingUpdate: (value) {},
+                        onRatingUpdate: (value) {
+                          filterObj.minRating = value;
+                        },
                       ),
                     ),
                   ),
@@ -258,7 +308,13 @@ class _FilterModalBottomState extends State<FilterModalBottom> {
               ),
             ),
             MaterialButton(
-              onPressed: widget.onPressed,
+              onPressed: () {
+                print('filterObj');
+
+                filterObj.skills = _skillFilter.datas;
+                print(filterObj);
+                widget.onPressed(filterObj);
+              },
               padding: EdgeInsets.symmetric(horizontal: 100, vertical: 15),
               child: Text('Apply Filter'),
               textColor: Colors.white,

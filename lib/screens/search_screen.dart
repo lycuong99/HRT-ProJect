@@ -1,12 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:hire_remote_team/blocs/search_bloc.dart';
 import 'package:hire_remote_team/components/filter_modal_bottom.dart';
 import 'package:hire_remote_team/components/team_card.dart';
 import 'package:hire_remote_team/models/filter.dart';
 import 'package:hire_remote_team/models/team.dart';
 import 'package:hire_remote_team/providers/firebase_auth.dart';
+import 'package:hire_remote_team/screens/team_profile_screen.dart';
 import 'package:hire_remote_team/ultilites/constants.dart';
 
 typedef ChangeSelectedSortItemCallback = void Function(SortItem sortItem);
@@ -38,8 +40,8 @@ class SearchAppBarDelegate extends SearchDelegate<String> {
     }
   }
 
-  Future<void> updateResult() async {
-    await _searchBloc.fetchResultSearch(query, filterObj, _sortBy.sortBy);
+  updateResult() {
+    _searchBloc.fetchResultSearch(query, filterObj, _sortBy.sortBy);
   }
 
   @override
@@ -54,12 +56,13 @@ class SearchAppBarDelegate extends SearchDelegate<String> {
       IconButton(
         icon: Icon(Icons.tune),
         onPressed: () async {
-          filterObj = await showModalBottomSheet(
+          await showModalBottomSheet(
             context: context,
             isScrollControlled: true,
             backgroundColor: Colors.transparent,
             builder: (context) => FilterModalBottom(
-              onPressed: () {
+              onPressed: (filterValue) {
+                filterObj = filterValue;
                 Navigator.pop(context);
               },
               filterObj: filterObj,
@@ -123,19 +126,29 @@ class SearchAppBarDelegate extends SearchDelegate<String> {
               await updateResult();
             },
           ),
-          ResultTeamCard(
-            name: 'FPTU Team',
-            imgUrl: 'images/avatar_2.jpg',
-            rating: 4.2,
-          ),
+          // ResultTeamCard(
+          //   name: 'FPTU Team',
+          //   imgUrl: 'images/avatar_2.jpg',
+          //   rating: 4.2,
+          // ),
           Expanded(
             child: StreamBuilder<TeamListModel>(
               stream: _searchBloc.stream,
               builder: (context, AsyncSnapshot<TeamListModel> snapshot) {
+                print('SNAP:${snapshot.hasData}');
                 if (snapshot.hasData) {
-                  return _buildTeamResult(snapshot);
+                  if (snapshot.data == null ||
+                      snapshot.data.results == null ||
+                      snapshot.data.results.length == 0) {
+                    return Center(
+                      child: Text('No record'),
+                    );
+                  }
+                  return _buildTeamResult(snapshot, context);
                 } else {
-                  return Center(child: Text('No recode'));
+                  return SpinKitCircle(
+                    color: kAppDefaultColor,
+                  );
                 }
               },
             ),
@@ -145,14 +158,29 @@ class SearchAppBarDelegate extends SearchDelegate<String> {
     );
   }
 
-  Widget _buildTeamResult(AsyncSnapshot<TeamListModel> snapshot) {
+  Widget _buildTeamResult(
+      AsyncSnapshot<TeamListModel> snapshot, BuildContext context) {
     List<Team> recommendTeams = snapshot.data.results;
     return ListView(
       children: recommendTeams
           .map((team) => ResultTeamCard(
                 name: team.name,
-                imgUrl: 'images/avatar_2.jpg',
+                imgUrl: 'images/teamLogo.jpg',
                 rating: team.averageRating,
+                totalMember: team.totalMemebr,
+                price: team.salarySuggest,
+                onTap: () async {
+                  // Navigator.pushNamed(context, TeamProfileScreen.i)
+                  await Navigator.push(context, MaterialPageRoute(
+                    builder: (context) {
+                      return TeamProfileScreen(
+                        idTeam: team.id,
+                      );
+                    },
+                  ));
+
+                  showResults(context);
+                },
               ))
           .toList(),
     );
@@ -179,15 +207,6 @@ class SearchAppBarDelegate extends SearchDelegate<String> {
 
   @override
   Widget buildSuggestions(BuildContext context) {
-    List<Item> items = [
-      Item(title: 'apple'),
-      Item(title: 'mango'),
-      Item(title: 'banana'),
-      Item(title: 'pineapple'),
-      Item(title: 'orange'),
-      Item(title: 'oranges'),
-    ];
-
     return StreamBuilder<DocumentSnapshot>(
       stream: _firestore
           .collection('query_searchs')
@@ -214,6 +233,7 @@ class SearchAppBarDelegate extends SearchDelegate<String> {
               ListTile suggestWidget = ListTile(
                 title: Text(suggest.toString()),
                 onTap: () {
+                  query = suggest;
                   showResults(context);
                 },
               );
@@ -348,15 +368,11 @@ class SortItem {
   getSortString() {
     switch (sortBy) {
       case Sort.BY_MAX_PRICE:
-        return 'Price Increase';
-      case Sort.BY_MIN_PRICE:
         return 'Price Decrease';
+      case Sort.BY_MIN_PRICE:
+        return 'Price Increase';
       case Sort.BY_MOST_PROJECT:
         return 'Amount of Received Project';
-      case Sort.BY_TEAM_SIZE_DECRESE:
-        return 'Team size decrease';
-      case Sort.BY_TEAM_SIZE_INCREASE:
-        return 'Team size increase';
       case Sort.BY_RATING:
         return 'Rating';
       case Sort.NONE:

@@ -1,10 +1,12 @@
+import 'dart:async';
+
 import 'package:hire_remote_team/models/team.dart';
 import 'package:hire_remote_team/repositories/team_repo.dart';
 import 'package:rxdart/rxdart.dart';
 
 class TeamBloc {
   final _repository = TeamRepo();
-  final _teamFetcher = PublishSubject<Team>();
+  final _teamFetcher = StreamController<Team>.broadcast();
 
   Stream<Team> get team => _teamFetcher.stream;
 

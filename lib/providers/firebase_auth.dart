@@ -14,7 +14,7 @@ class AuthProvider {
     final user = await _auth.createUserWithEmailAndPassword(
         email: email, password: password);
 
-    _auth.currentUser.getIdToken(true).whenComplete(() => () {});
+    // _auth.currentUser.getIdToken(true).whenComplete(() => () {});
     return user;
   }
 
@@ -22,7 +22,7 @@ class AuthProvider {
     final user = await _auth.signInWithEmailAndPassword(
         email: email, password: password);
 
-    _auth.currentUser.getIdToken(true).whenComplete(() => () {});
+    // _auth.currentUser.getIdToken(true).whenComplete(() => () {});
     return user;
   }
 
@@ -36,7 +36,7 @@ class AuthProvider {
         idToken: (await account.authentication).idToken,
         accessToken: (await account.authentication).accessToken,
       ));
-      print('UID' + res.user.uid);
+
       if (res.user == null) return false;
       return true;
     } catch (e) {

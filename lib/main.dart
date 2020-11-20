@@ -3,6 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_config/flutter_config.dart';
 import 'package:hire_remote_team/providers/firebase_auth.dart';
+import 'package:hire_remote_team/providers/push_notification.dart';
 import 'package:hire_remote_team/screens/create_contract_screen_body.dart';
 import 'package:hire_remote_team/screens/home_screen.dart';
 import 'package:hire_remote_team/screens/login_screen.dart';
@@ -18,6 +19,12 @@ import 'package:hire_remote_team/screens/welcome_screen.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  // PushNotificationService pushNotificationService = PushNotificationService();
+  // await pushNotificationService.initialise();
+  PushNotificationsManager pushNotificationsManager =
+      PushNotificationsManager();
+  pushNotificationsManager.init();
+
   runApp(MyApp());
 }
 

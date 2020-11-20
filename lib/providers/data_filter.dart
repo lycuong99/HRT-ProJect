@@ -13,7 +13,7 @@ class DataFilter {
     List<Skill> skills = [];
 
     if (skillsJson != null) {
-      for (int i = 0; i < skillsJson.length(); i++) {
+      for (int i = 0; i < skillsJson.length; i++) {
         Skill skill = Skill.fromJson(skillsJson[i]);
         skills.add(skill);
       }

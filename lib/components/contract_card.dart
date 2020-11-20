@@ -7,11 +7,11 @@ import 'package:hire_remote_team/ultilites/constants.dart';
 class ContractCard extends StatelessWidget {
   Widget statusWidget;
 
-  final Contract deal;
-  ContractCard({@required this.deal});
+  final Contract contract;
+  ContractCard({@required this.contract});
 
   getStatusWidget() {
-    switch (deal.status) {
+    switch (contract.status) {
       case StatusContract.WAITING:
         return Text(
           '...waiting',
@@ -89,7 +89,7 @@ class ContractCard extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     Text(
-                      deal.name,
+                      contract.name,
                       style: TextStyle(
                           letterSpacing: 0.5,
                           fontWeight: FontWeight.w500,
@@ -102,7 +102,7 @@ class ContractCard extends StatelessWidget {
                         size: 18,
                       ),
                       title: Text(
-                        deal.teamId,
+                        contract.teamId,
                         style: TextStyle(color: kGreyColor, fontSize: 13),
                       ),
                     ),
@@ -113,7 +113,7 @@ class ContractCard extends StatelessWidget {
                         size: 18,
                       ),
                       title: Text(
-                        deal.description,
+                        contract.description,
                         style: TextStyle(
                             color: kGreyColor, fontWeight: FontWeight.w400),
                       ),
@@ -127,7 +127,7 @@ class ContractCard extends StatelessWidget {
                             size: 18,
                           ),
                           title: Text(
-                            deal.statusId,
+                            contract.statusId,
                             style: TextStyle(color: kGreyColor, fontSize: 13),
                           ),
                         ),
@@ -151,7 +151,7 @@ class ContractCard extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          deal.dateCreated,
+                          contract.dateCreated,
                           style: TextStyle(color: kGreyColor, fontSize: 13),
                         ),
                         getStatusWidget()

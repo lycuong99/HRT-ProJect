@@ -10,7 +10,7 @@ class MemberCard extends StatelessWidget {
   MemberCard(
       {this.name,
       this.memberId,
-      this.role,
+      this.role = 'developers',
       this.imgProfileURL = 'images/avatar_1.png'});
 
   @override

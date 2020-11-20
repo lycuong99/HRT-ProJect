@@ -107,6 +107,9 @@ class _SignInScreenState extends State<SignInScreen> {
                             if (errorCode == 540662271) {
                               return 'The email address is badly formatted.';
                             }
+                            if (errorCode == 86194409) {
+                              return 'The email address is already in use by another account.';
+                            }
                             return null;
                           },
                           decoration: const InputDecoration(
@@ -193,7 +196,7 @@ class _SignInScreenState extends State<SignInScreen> {
                                 String email = _emailInputController.text;
                                 String password = _passwordInputController.text;
 
-                                final user = authProvider.signUpWithEmail(
+                                final user = await authProvider.signUpWithEmail(
                                     email, password);
 
                                 if (user != null) {
